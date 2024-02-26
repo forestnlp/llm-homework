@@ -46,7 +46,7 @@ def initialize_translator():
     # 实例化 PDFTranslator 类，并调用 translate_pdf() 方法
     global Translator
     Translator = PDFTranslator(config.model_name)
-
+    #Translator = PDFTranslator('chatglm3')
 
 if __name__ == "__main__":
     # 初始化 translator

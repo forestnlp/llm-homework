@@ -9,7 +9,7 @@
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import (ChatPromptTemplate,SystemMessagePromptTemplate,HumanMessagePromptTemplate)
-
+from langchain_community.llms.chatglm3 import ChatGLM3
 from langchain.chains import LLMChain
 
 # from langchain.prompts.chat import (
@@ -41,19 +41,24 @@ class TranslationChain:
         )
 
         # 为了翻译结果的稳定性，将 temperature 设置为 0
-        chat = ChatOpenAI(model_name=model_name, temperature=0, verbose=verbose)
+        if(model_name=="gpt-3.5-turbo"):
+            chat = ChatOpenAI(model_name=model_name, temperature=0, verbose=verbose)
+        else:
+            chat = ChatGLM3(endpoint_url="http://127.0.0.1:6006/v1/chat/completions",max_tokens=80000,top_p=0.9, temperature=0, verbose=verbose)
+
+
         self.chain = LLMChain(llm=chat, prompt=chat_prompt_template, verbose=verbose)
 
     def run(self, text: str, source_language: str, target_language: str,styles:str) -> (str, bool):
-        import os
-        import socket
-        import socks
+        # import os
+        # import socket
+        # import socks
 
-        socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 10808)
-        socket.socket = socks.socksocket
-        os.environ['SERPAPI_API_KEY'] = 'YOUR SERPAPI_API_KEY'
-        os.environ['OPENAI_API_KEY'] = 'YOUR_OPENAI_API_KEY'
-
+        # socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 10808)
+        # socket.socket = socks.socksocket
+        # os.environ['SERPAPI_API_KEY'] = 'YOUR SERPAPI_API_KEY'
+        # os.environ['OPENAI_API_KEY'] = 'YOUR_OPENAI_API_KEY'
+        
         result = ""
         try:
             result = self.chain.run({
